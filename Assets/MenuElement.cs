@@ -1,13 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
 [RequireComponent(typeof(Canvas))]
 [RequireComponent(typeof(CanvasGroup))]
-public class MenuPage : MonoBehaviour
+public class MenuElement : MonoBehaviour
 {
 	public GameObject selection;
+	public Graphic graphic;
+	public Color selected;
+	public Color unselected;
 	Canvas canvas;
 	CanvasGroup canvasGroup;
 
@@ -19,27 +23,26 @@ public class MenuPage : MonoBehaviour
 		canvasGroup.interactable = false;
 	}
 
-	void Enable(bool enable)
+	public void Activate(bool enable)
 	{
-		if (!enable && EventSystem.current != null)
+		if (canvasGroup.interactable && !enable && EventSystem.current != null)
 		{
 			selection = EventSystem.current.currentSelectedGameObject;
 		}
-		canvas.enabled = enable;
 		canvasGroup.interactable = enable;
-		if (enable)
+		if (enable && EventSystem.current != null)
 		{
 			EventSystem.current.SetSelectedGameObject(selection);
 		}
 	}
 
-	void OnEnable()
+	public void Show(bool show)
 	{
-		Enable(true);
+		canvas.enabled = show;
 	}
 
-	void OnDisable()
+	public void Select(bool select)
 	{
-		Enable(false);
+		graphic.color = select? selected : unselected;
 	}
 }

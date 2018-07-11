@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class BehaviourSelector : MonoBehaviour
+public class MenuPager : MonoBehaviour
 {
-	public List<Behaviour> pages = new List<Behaviour>();
+	public List<MenuElement> pages = new List<MenuElement>();
 
 	void OnEnable()
 	{
 		if (pages.Count > 0)
 		{
-			ActivatePage(pages[0]);
+			Activate(pages[0]);
 		}
 		else
 		{
@@ -28,13 +28,19 @@ public class BehaviourSelector : MonoBehaviour
 	{
 		foreach (var page in pages)
 		{
-			page.enabled = false;
+			Enable(page, false);
 		}
 	}
 
-	public void ActivatePage(Behaviour page)
+	void Enable(MenuElement page, bool enable)
+	{
+		page.Activate(enable);
+		page.Show(enable);
+	}
+
+	public void Activate(MenuElement page)
 	{
 		DisablePages();
-		page.enabled = true;
+		Enable(page, true);
 	}
 }
