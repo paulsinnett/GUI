@@ -3,42 +3,37 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+[RequireComponent(typeof(MenuElement))]
 public class MenuTrail : MonoBehaviour 
 {
 	public List<MenuElement> steps;
+	MenuElement element;
 
-	void OnEnable()
+	void Awake()
 	{
-		if (steps.Count > 0)
-		{
-			Activate(steps[0]);
-		}
-		else
-		{
-			DisableSteps();
-			HideSteps();
-		}
+		element = GetComponent<MenuElement>();
 	}
 
-	void OnDisable()
+	void Start()
 	{
-		DisableSteps();
-		HideSteps();
+		element.onActivateElement.AddListener(() => StartTrail());
+	}
+
+	void StartTrail()
+	{
+		MenuElement firstPage = null;
+		if (steps.Count > 0)
+		{
+			firstPage = steps[0];
+		}
+		Activate(firstPage);
 	}
 
 	void HideSteps()
 	{
 		foreach (var step in steps)
 		{
-			step.Show(false);
-		}
-	}
-
-	void DisableSteps()
-	{
-		foreach (var step in steps)
-		{
-			step.Activate(false);
+			step.ActivateElement(ActivateMessage.Hide());
 		}
 	}
 
@@ -47,7 +42,7 @@ public class MenuTrail : MonoBehaviour
 		bool show = true;
 		foreach (var step in steps)
 		{
-			step.Show(show);
+			step.ActivateElement(show? ActivateMessage.ShowTrail() : ActivateMessage.Hide());
 			if (step == current)
 			{
 				show = false;
@@ -57,8 +52,7 @@ public class MenuTrail : MonoBehaviour
 
 	public void Activate(MenuElement step)
 	{
-		DisableSteps();
 		ShowToStep(step);
-		step.Activate(true);
+		step.ActivateElement(ActivateMessage.Activate());
 	}
 }

@@ -2,25 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(MenuElement))]
 public class MenuList : MonoBehaviour 
 {
 	public List<MenuElement> options = new List<MenuElement>();
+	MenuElement menuElement;
 
-	void OnEnable()
+	void Awake()
 	{
-		if (options.Count > 0)
-		{
-			Activate(options[0]);
-		}
-		else
-		{
-			DeselectAll();
-		}
+		menuElement = GetComponent<MenuElement>();
 	}
 
-	void OnDisable()
+	void Start()
 	{
-		DeselectAll();
 	}
 
 	void DeselectAll()
@@ -33,8 +27,26 @@ public class MenuList : MonoBehaviour
 
 	void Select(MenuElement element, bool select)
 	{
-		element.Activate(select);
-		element.Select(select);
+		element.SendMessage("ActivateElement", select? ActivateMessage.Highlight() : ActivateMessage.ShowTrail());
+	}
+
+	public void ActivateElement(ActivateMessage message)
+	{
+		if (message.show)
+		{
+			if (options.Count > 0)
+			{
+				Activate(options[0]);
+			}
+			else
+			{
+				DeselectAll();
+			}
+		}
+		else
+		{
+			DeselectAll();
+		}
 	}
 
 	public void Activate(MenuElement option)
